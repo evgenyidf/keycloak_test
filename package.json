@@ -1,8 +1,8 @@
 {
   "name": "keyclock",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "Legit DevOps task",
+  "author": "Evgeny Subotin",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {

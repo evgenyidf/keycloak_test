@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+  keyclock:
+    container_name: keyclock
+    # cpus: 0.2
+    # mem_reservation: 1G
+    # mem_limit: 1G
+    environment:
+      - KEYCLOAK_LOGLEVEL=DEBUG
+      - KEYCLOAK_USER=admin
+      - KEYCLOAK_PASSWORD=admin
+    image: jboss/keycloak:16.1.1
+    expose:
+      - '8443'
+      - '8080'
+      - '9990'
+    ports:
+      - '127.0.0.1:8443:8443'
+      - '127.0.0.1:8080:8080'
+      - '127.0.0.1:9990:9990'
+    volumes:
+      - $PWD/data:/opt/jboss/keycloak/standalone/data
+    networks:
+      - default
+    restart: unless-stopped
+
+  manager:
+    container_name: manager
+    # cpus: 0.5
+    # mem_reservation: 1G
+    # mem_limit: 1.5G
+    image: keyclock_mng:latest
+    ports:
+      - 8088:3000
+    volumes:
+      - $PWD/data:/var/data
+    # build:
+    #   context: .
+    #   target: staging
+    #   dockerfile: ./Dockerfile
+    # command: sh -c "yarn run start:stg"
+    networks:
+      - default
+    restart: always
+
+  # nginx:
+  #   container_name: nginx
+  #   image: nginx:latest
+  #   depends_on:
+  #     - 'backend'
+  #   ports:
+  #     - 80:80
+  #     - 443:443
+  #   networks:
+  #     - default
+  #   volumes:
+  #     - ./src/nginx/api-stg.exbetz.com.conf:/etc/nginx/conf.d/api-stg.exbetz.com.conf
+  #     - /etc/letsencrypt/live/api-stg.exbetz.com/privkey.pem:/etc/nginx/cert/api-stg.exbetz.com.key
+  #     - /etc/letsencrypt/live/api-stg.exbetz.com/fullchain.pem:/etc/nginx/cert/api-stg.exbetz.com.pem
+  #   restart: unless-stopped
+
+  # cache:
+  #   image: redis:6.2-alpine
+  #   restart: always
+  #   networks:
+  #     - default
+  #   ports:
+  #     - '6379:6379'
+  #   command: redis-server --save 20 1 --loglevel warning
